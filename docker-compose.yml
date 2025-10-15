@@ -13,6 +13,7 @@ services:
       - "8001:8001"
     volumes:
       - ./my-express-server:/usr/src/app
-    command: yarn start
+      - /usr/src/app/node_modules
+    command: node src/app.js
     depends_on:
       - python-server

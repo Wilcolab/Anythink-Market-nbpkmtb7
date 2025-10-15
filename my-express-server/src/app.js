@@ -1,27 +1,40 @@
 const express = require('express');
-const axios = require('axios');
 
 const app = express();
 const PORT = 8001;
 
-// Root endpoint for health checks
+// Middleware to parse JSON request bodies
+app.use(express.json());
+
+// In-memory storage for tasks (matching Python server's initial data)
+let tasks = [
+  "Write a diary entry from the future",
+  "Create a time machine from a cardboard box",
+  "Plan a trip to the dinosaurs",
+  "Draw a futuristic city",
+  "List items to bring on a time-travel adventure"
+];
+
+// Root endpoint - returns "Hello World" (matching Python server)
 app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Node.js Express server is running',
-    status: 'healthy',
-    port: PORT
-  });
+  res.send('Hello World');
 });
 
-// Route to test Python API
-app.get('/tasks', async (req, res) => {
-  try {
-    const response = await axios.get('http://python-server:8000/tasks');
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error connecting to Python server:', error.message);
-    res.status(500).json({ error: 'Failed to fetch from Python server' });
+// GET /tasks - Returns list of tasks
+app.get('/tasks', (req, res) => {
+  res.json({ tasks });
+});
+
+// POST /tasks - Adds a new task
+app.post('/tasks', (req, res) => {
+  const { text } = req.body;
+  
+  if (!text) {
+    return res.status(400).json({ error: 'Task text is required' });
   }
+  
+  tasks.push(text);
+  res.json({ message: 'Task added successfully' });
 });
 
 app.listen(PORT, '0.0.0.0', () => {

@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 8001
 
-CMD ["yarn", "start"]
+CMD ["node", "src/app.js"]

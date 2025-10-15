@@ -1,9 +1,19 @@
 services:
   python-server:
-    build:
-      context: ./python-server
-      dockerfile: Dockerfile
+    build: ./python-server
     ports:
-      - 8000:8000
+      - "8000:8000"
     volumes:
-      - ./python-server/src:/app/src
+      - ./python-server:/app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+
+  node-server:
+    build: ./my-express-server
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./my-express-server:/usr/src/app
+      - /usr/src/app/node_modules
+    command: node src/app.js
+    depends_on:
+      - python-server
